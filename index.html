@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Coffee Nook | Order Online</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --coffee-dark: #3c2a21;
+            --coffee-medium: #594545;
+            --cream: #fff8ea;
+            --accent: #d4a373;
+            --white: #ffffff;
+            --shadow: 0 10px 30px rgba(0,0,0,0.08);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Poppins', sans-serif; background-color: var(--cream); color: var(--coffee-dark); scroll-behavior: smooth; }
+
+        /* --- Header --- */
+        header {
+            position: fixed; top: 0; width: 100%; padding: 15px 5%;
+            display: flex; justify-content: space-between; align-items: center;
+            background: rgba(60, 42, 33, 0.95); backdrop-filter: blur(5px); z-index: 1000;
+        }
+        .cart-btn {
+            background: var(--accent); color: white; border: none;
+            padding: 10px 25px; border-radius: 50px; cursor: pointer; font-weight: 600;
+            transition: 0.3s;
+        }
+        .cart-btn:hover { background: #b08968; transform: scale(1.05); }
+
+        /* --- Hero --- */
+        .hero {
+            height: 50vh; display: flex; flex-direction: column; justify-content: center;
+            align-items: center; text-align: center; color: white;
+            background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('https://images.unsplash.com/photo-1442512595331-e89e73853f31?auto=format&fit=crop&w=1350&q=80');
+            background-size: cover; background-position: center;
+        }
+
+        /* --- Layout --- */
+        .container { max-width: 1100px; margin: 40px auto; padding: 0 20px; }
+        .category-header { font-family: 'Playfair Display', serif; font-size: 2.2rem; margin: 50px 0 20px; color: var(--coffee-dark); border-left: 5px solid var(--accent); padding-left: 15px; }
+        
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 30px; }
+
+        /* --- Item Cards --- */
+        .card {
+            background: var(--white); border-radius: 20px; padding: 25px;
+            box-shadow: var(--shadow); transition: 0.3s; border: 1px solid rgba(0,0,0,0.05);
+        }
+        .card:hover { transform: translateY(-8px); box-shadow: 0 15px 40px rgba(0,0,0,0.12); }
+        .card h3 { font-family: 'Playfair Display', serif; font-size: 1.4rem; margin-bottom: 8px; }
+        .card p { font-size: 0.85rem; color: #777; margin-bottom: 20px; }
+
+        .label { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: var(--accent); display: block; margin-bottom: 8px; }
+
+        .size-selector { display: flex; gap: 8px; margin-bottom: 15px; }
+        .size-btn {
+            flex: 1; border: 1px solid #ddd; background: white; padding: 8px;
+            border-radius: 10px; cursor: pointer; font-size: 0.8rem; transition: 0.2s;
+        }
+        .size-btn.active { background: var(--coffee-dark); color: white; border-color: var(--coffee-dark); }
+
+        .special-notes {
+            width: 100%; border: 1px solid #eee; border-radius: 10px; padding: 10px;
+            font-family: inherit; font-size: 0.8rem; background: #fafafa; margin-bottom: 15px;
+            resize: none;
+        }
+
+        .add-to-cart {
+            width: 100%; background: var(--coffee-dark); color: white; border: none;
+            padding: 12px; border-radius: 12px; cursor: pointer; font-weight: 600;
+            transition: 0.3s;
+        }
+        .add-to-cart:hover { background: var(--coffee-medium); }
+
+        /* --- Sidebar --- */
+        #cart-sidebar {
+            position: fixed; right: -450px; top: 0; width: 400px; height: 100%;
+            background: white; box-shadow: -10px 0 30px rgba(0,0,0,0.1);
+            transition: 0.5s cubic-bezier(0.4, 0, 0.2, 1); z-index: 2000; padding: 40px 30px;
+            display: flex; flex-direction: column;
+        }
+        #cart-sidebar.open { right: 0; }
+        .cart-items { flex-grow: 1; overflow-y: auto; margin: 20px 0; }
+        .cart-item { margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid #f0f0f0; }
+        .cart-item-note { font-style: italic; color: #888; font-size: 0.8rem; margin-top: 5px; }
+        
+        .checkout-btn {
+            background: #2d6a4f; color: white; width: 100%; padding: 18px;
+            border: none; border-radius: 15px; font-size: 1.1rem; font-weight: 600; cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div style="font-weight: 700; font-size: 1.4rem; color: white; letter-spacing: 1px;">COFFEE NOOK</div>
+        <button class="cart-btn" onclick="toggleCart()">🛒 Basket (<span id="cart-count">0</span>)</button>
+    </header>
+
+    <section class="hero">
+        <h1 style="font-size: 3.5rem;">The Shop</h1>
+        <p>Customized to your taste, delivered to your table.</p>
+    </section>
+
+    <div class="container">
+        <h2 class="category-header">Hand-Crafted Drinks</h2>
+        <div class="grid">
+            <div class="card" id="card-latte">
+                <h3>Iced Mocha</h3>
+                <p>Chocolatey espresso bliss over ice.</p>
+                <span class="label">Select Size</span>
+                <div class="size-selector">
+                    <button class="size-btn active" onclick="selectSize(this, 5.00)">S ($5)</button>
+                    <button class="size-btn" onclick="selectSize(this, 6.00)">M ($6)</button>
+                    <button class="size-btn" onclick="selectSize(this, 7.00)">L ($7)</button>
+                </div>
+                <span class="label">Special Instructions</span>
+                <textarea class="special-notes" placeholder="e.g. Extra oat milk, no ice..."></textarea>
+                <button class="add-to-cart" onclick="addToCart('Iced Mocha', true)">Add to Basket</button>
+            </div>
+
+            <div class="card">
+                <h3>Flat White</h3>
+                <p>Rich espresso with thin, velvety steamed milk.</p>
+                <span class="label">Select Size</span>
+                <div class="size-selector">
+                    <button class="size-btn active" onclick="selectSize(this, 4.50)">S ($4.50)</button>
+                    <button class="size-btn" onclick="selectSize(this, 5.50)">M ($5.50)</button>
+                </div>
+                <span class="label">Special Instructions</span>
+                <textarea class="special-notes" placeholder="e.g. Decaf, extra hot..."></textarea>
+                <button class="add-to-cart" onclick="addToCart('Flat White', true)">Add to Basket</button>
+            </div>
+        </div>
+
+        <h2 class="category-header">Fresh Food</h2>
+        <div class="grid">
+            <div class="card">
+                <h3>Avocado Croissant</h3>
+                <p>Flaky butter croissant with fresh avocado mash.</p>
+                <span class="label">Quantity</span>
+                <input type="number" value="1" min="1" class="qty-input" style="width: 100%; padding: 10px; margin-bottom: 15px; border-radius: 10px; border: 1px solid #ddd;">
+                <span class="label">Special Instructions</span>
+                <textarea class="special-notes" placeholder="e.g. No chili flakes, extra toasted..."></textarea>
+                <button class="add-to-cart" onclick="addToCart('Avocado Croissant', false, 9.50)">Add to Basket</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="cart-sidebar">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <h2 style="font-family: 'Playfair Display';">Your Order</h2>
+            <button onclick="toggleCart()" style="background:none; border:none; font-size: 2rem; cursor:pointer;">&times;</button>
+        </div>
+        <div class="cart-items" id="cart-list"></div>
+        <div style="border-top: 2px solid #f0f0f0; padding-top: 20px;">
+            <div style="display: flex; justify-content: space-between; font-size: 1.3rem; font-weight: 700; margin-bottom: 20px;">
+                <span>Total</span>
+                <span>$<span id="total-price">0.00</span></span>
+            </div>
+            <button class="checkout-btn" onclick="alert('Sending order to the kitchen!')">Place Order</button>
+        </div>
+    </div>
+
+    <script>
+        let cart = [];
+
+        function toggleCart() {
+            document.getElementById('cart-sidebar').classList.toggle('open');
+        }
+
+        function selectSize(btn, price) {
+            const container = btn.parentElement;
+            container.querySelectorAll('.size-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+        }
+
+        function addToCart(name, isDrink, price = 0) {
+            // Find the card that was clicked
+            const cards = document.querySelectorAll('.card');
+            let selectedCard;
+            cards.forEach(c => { if(c.querySelector('h3').innerText === name) selectedCard = c; });
+
+            let finalPrice = price;
+            let qty = 1;
+            let note = selectedCard.querySelector('.special-notes').value;
+
+            if (isDrink) {
+                const activeSize = selectedCard.querySelector('.size-btn.active');
+                finalPrice = parseFloat(activeSize.innerText.split('$')[1]);
+                name += ` (${activeSize.innerText.split(' ')[0]})`;
+            } else {
+                qty = parseInt(selectedCard.querySelector('.qty-input').value);
+            }
+
+            const item = {
+                name: name,
+                price: finalPrice,
+                quantity: qty,
+                total: finalPrice * qty,
+                note: note
+            };
+
+            cart.push(item);
+            updateUI();
+            
+            // Clear note after adding
+            selectedCard.querySelector('.special-notes').value = "";
+        }
+
+        function updateUI() {
+            const list = document.getElementById('cart-list');
+            const count = document.getElementById('cart-count');
+            const totalDisplay = document.getElementById('total-price');
+            
+            list.innerHTML = '';
+            let grandTotal = 0;
+
+            cart.forEach((item, index) => {
+                grandTotal += item.total;
+                list.innerHTML += `
+                    <div class="cart-item">
+                        <div style="display: flex; justify-content: space-between;">
+                            <strong>${item.name} x${item.quantity}</strong>
+                            <span>$${item.total.toFixed(2)}</span>
+                        </div>
+                        ${item.note ? `<div class="cart-item-note">" ${item.note} "</div>` : ''}
+                    </div>
+                `;
+            });
+
+            count.innerText = cart.length;
+            totalDisplay.innerText = grandTotal.toFixed(2);
+        }
+    </script>
+</body>
+</html>
